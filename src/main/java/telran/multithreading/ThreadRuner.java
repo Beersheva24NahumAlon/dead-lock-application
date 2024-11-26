@@ -1,29 +1,27 @@
 package telran.multithreading;
 
 public class ThreadRuner extends Thread {
-    private boolean order;
+    private Object mutex1;
+    private Object mutex2;
+    private String srcName1;
+    private String srcName2;
 
-    public ThreadRuner(boolean order) {
-        this.order = order;
-    }
-
-    private void action(String name1, String name2, Object mutex1, Object mutex2) {
-        synchronized (mutex1) {
-            System.out.println("Locking %s by %s".formatted(name1, getName()));
-            synchronized (mutex2) {
-                System.out.println("Locking %s by %s".formatted(name2, getName()));
-                System.out.println("Unlocking %s by %s".formatted(name2, getName()));
-            }
-            System.out.println("Unlocking %s by %s".formatted(name1, getName()));
-        }
+    public ThreadRuner(String srcName1, Object mutex1, String srcName2, Object mutex2) {
+        this.mutex1 = mutex1;
+        this.mutex2 = mutex2;
+        this.srcName1 = srcName1;
+        this.srcName2 = srcName2;
     }
 
     @Override
     public void run() {
-        if (order) {
-            action("source 1", "source 2", Main.m1, Main.m2);
-        } else {
-            action("source 2", "source 1", Main.m2, Main.m1);
+        synchronized (mutex1) {
+            System.out.println("Locking %s by %s".formatted(srcName1, getName()));
+            synchronized (mutex2) {
+                System.out.println("Locking %s by %s".formatted(srcName2, getName()));
+                System.out.println("Unlocking %s by %s".formatted(srcName2, getName()));
+            }
+            System.out.println("Unlocking %s by %s".formatted(srcName1, getName()));
         } 
     }
 }
